@@ -21,6 +21,8 @@ sequelize,
 Sequelize,
 User : require("../src/models/user_model/user.model")(sequelize,DataTypes),
 Seller : require("../src/models/seller_model/seller.model")(sequelize,DataTypes),
+Category: require("../src/models/category_model/category.model")(sequelize,DataTypes),
+Subcategory: require("../src/models/subcategory_model/subcategory.model")(sequelize,DataTypes),
 }
 
 

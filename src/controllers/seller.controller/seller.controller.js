@@ -7,15 +7,19 @@ const Seller = db.Seller; // Import the Seller model from your Sequelize setup
 const User = db.User; // Import the User model from your Sequelize setup
 
 // Create new seller
+
 exports.createSeller = async (req, res) => {
   try {
-    const { user_id, store_name, store_description, status = "approved" } = req.body;
-    console.log(req.body)
+    const { user_id, store_name, store_description, status = 'approved' } = req.body;
+    console.log(req.body);
+
+    // Check if seller already exists for this user
     const existingSeller = await Seller.findOne({ where: { user_id } });
     if (existingSeller) {
       return res.status(400).json({ message: 'Seller already exists for this user.' });
     }
 
+    // Create seller
     const seller = await Seller.create({
       user_id,
       store_name,
@@ -23,12 +27,23 @@ exports.createSeller = async (req, res) => {
       status,
     });
 
-    return res.status(201).json({ seller  , success : true , message : 'Seller created successfully'} );
+    // Update the user role to 'seller' (or whatever role you want)
+    await User.update(
+      { role: 'seller' },
+      { where: { id: user_id } }
+    );
+
+    return res.status(201).json({ 
+      seller, 
+      success: true, 
+      message: 'Seller created successfully .' 
+    });
   } catch (error) {
     console.error('Create Seller Error:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 
 // Get all sellers
 exports.getAllSellers = async (req, res) => {

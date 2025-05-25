@@ -11,4 +11,16 @@ module.exports = (db) => {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE'
   });
+
+    db.Category.hasMany(db.Subcategory, {
+    foreignKey: 'category_id',
+    as: 'subcategories',
+    onDelete: 'CASCADE',
+  })
+
+  db.Subcategory.belongsTo(db.Category, {
+    foreignKey: 'category_id',
+    as: 'category',
+  })
+
 };
