@@ -44,6 +44,7 @@ const userRegistration = async (req, res) => {
 
     return res.status(200).json({
       status: true,
+      success : true,
       message: "Registration successful",
       data: newUser,
     });

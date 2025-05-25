@@ -32,4 +32,3 @@ db.sequelize.sync({ alter: true })
  
 module.exports = db; 
  
-module.exports = db; 

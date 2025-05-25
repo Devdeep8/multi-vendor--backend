@@ -5,7 +5,6 @@ const cors = require("cors");
 const path = require('path');
 const db = require("./config/database")
 
-
 const app = express()
 
 // Middleware
@@ -28,6 +27,7 @@ app.get("/",(req,res)=>{
     res.send("Hello this is form the best backend ")
 })
 
+app.use("/",mainRoutes)
 
 
 app.listen(process.env.PORT,()=>{
