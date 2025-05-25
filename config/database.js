@@ -20,12 +20,12 @@ const db = {
 sequelize,
 Sequelize,
 User : require("../src/models/user_model/user.model")(sequelize,DataTypes),
+Seller : require("../src/models/seller_model/seller.model")(sequelize,DataTypes),
 }
 
 
 
-// require('../config/association')(db);
-
+require("../config/association")(db)
 db.sequelize.sync({ alter: true })
   .then(() => console.log('Database synchronized successfully.'))
   .catch(console.error);
