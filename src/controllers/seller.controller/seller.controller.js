@@ -71,6 +71,38 @@ exports.getSellerById = async (req, res) => {
   }
 };
 
+// get seller with userId
+
+exports.getSellerByUserId = async (req, res) => {
+  try {
+    const { user_id } = req.params;
+
+    const seller = await Seller.findOne({
+      where: { user_id },
+      attributes: ['id'], // Only return seller ID
+      include: {
+        model: User,
+        attributes: ['name'], // Only return user name
+      },
+    });
+
+    if (!seller) {
+      return res.status(404).json({ message: 'Seller not found for this user ID' });
+    }
+
+    // Return clean structured data
+    res.status(200).json({
+      seller: {
+        id: seller.id,
+        name: seller.User.name,
+      },
+    });
+  } catch (error) {
+    console.error('Get Seller by User ID Error:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
 // Update seller
 exports.updateSeller = async (req, res) => {
   try {

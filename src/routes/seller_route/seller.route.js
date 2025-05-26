@@ -14,6 +14,9 @@ router.get('/get-seller-by-id//:id', sellerController.getSellerById)
 // Update seller by ID
 router.put('/update-seller/:id', sellerController.updateSeller)
 
+// ✅ Get seller by user ID
+router.get('/get-seller-by-userid/:user_id', sellerController.getSellerByUserId)
+
 // Delete seller by ID
 router.delete('/delete-seller/:id', sellerController.deleteSeller)
 

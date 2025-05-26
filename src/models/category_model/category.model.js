@@ -10,7 +10,7 @@ module.exports = (sequelize) => {
     name: {
       type: DataTypes.STRING(100),
       allowNull: false,
-      unique: true,
+            unique: "categories_name_unique",
       validate: {
         notEmpty: true,
       },
