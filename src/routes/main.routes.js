@@ -9,6 +9,8 @@ const product = require("../routes/product_route/product.route")
 const wishlist = require("../routes/wishlist_routes/wishlist.routes")
 const review = require("../routes/review_routes/review.routes")
 const inventoryRoutes = require("../routes/inventory_routes/inventory_routes");
+const cartRoutes = require("../routes/cart_routes/cart.route");
+
 router.use("/inventories", inventoryRoutes);
 router.use("/auth", userRoutes)
 router.use("/sellers", seller)

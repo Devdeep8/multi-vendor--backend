@@ -1,37 +1,37 @@
 module.exports = (db) => {
   // Wishlist Associations
   db.Wishlist.belongsTo(db.User, {
-    foreignKey: 'user_id',
-    onDelete: 'CASCADE',
+    foreignKey: "user_id",
+    onDelete: "CASCADE",
   });
   db.Wishlist.belongsTo(db.Product, {
-    foreignKey: 'product_id',
-    onDelete: 'CASCADE',
+    foreignKey: "product_id",
+    onDelete: "CASCADE",
   });
 
   // ProductReview Associations
   db.ProductReview.belongsTo(db.User, {
-    foreignKey: 'user_id',
-    onDelete: 'CASCADE',
+    foreignKey: "user_id",
+    onDelete: "CASCADE",
   });
   db.ProductReview.belongsTo(db.Product, {
-    foreignKey: 'product_id',
-    onDelete: 'CASCADE',
+    foreignKey: "product_id",
+    onDelete: "CASCADE",
   });
 
   // Reverse associations
   db.User.hasMany(db.Wishlist, {
-    foreignKey: 'user_id',
+    foreignKey: "user_id",
   });
   db.User.hasMany(db.ProductReview, {
-    foreignKey: 'user_id',
+    foreignKey: "user_id",
   });
 
   db.Product.hasMany(db.Wishlist, {
-    foreignKey: 'product_id',
+    foreignKey: "product_id",
   });
   db.Product.hasMany(db.ProductReview, {
-    foreignKey: 'product_id',
+    foreignKey: "product_id",
   });
 
   // User → Seller (One-to-One)
@@ -82,11 +82,19 @@ module.exports = (db) => {
   });
 
   db.Inventory.belongsTo(db.ProductVariant, {
-  foreignKey: "product_variant_id",
-  onDelete: "CASCADE",
-});
-db.ProductVariant.hasOne(db.Inventory, {
-  foreignKey: "product_variant_id",
-});
+    foreignKey: "product_variant_id",
+    onDelete: "CASCADE",
+  });
 
+  db.ProductVariant.hasOne(db.Inventory, {
+    foreignKey: "product_variant_id",
+  });
+
+  db.Cart.belongsTo(db.User, {
+    foreignKey: "user_id",
+  });
+
+  db.Cart.belongsTo(db.ProductVariant, {
+    foreignKey: "product_variant_id",
+  });
 };

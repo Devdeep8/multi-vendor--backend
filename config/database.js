@@ -28,6 +28,7 @@ ProductVariant : require("../src/models/product_varient_model/product.varient.mo
 Wishlist : require("../src/models/wishlist_model/wishlist.model")(sequelize,DataTypes),
 ProductReview : require("../src/models/review_model/review.model")(sequelize,DataTypes),
 Inventory : require("../src/models/inventory_model/inventory.model")(sequelize,DataTypes),
+Cart : require("../src/models/carts_model/cart.model")(sequelize,DataTypes)
 } 
 
 
