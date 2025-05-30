@@ -42,7 +42,7 @@ exports.verifyToken = async (req, res, next) => {
       id: user.id,
       name: user.name,
       email: user.email,
-      userType: user.userType
+      userType: user.role
     };
 
     next();

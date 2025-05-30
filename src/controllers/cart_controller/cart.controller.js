@@ -1,70 +1,90 @@
 const db = require('../../../config/database');
-const { Op } = require('sequelize');
 
 // Add item to cart 
 exports.addToCart = async (req, res) => {
-  try { 
-    const { product_variant_id, quantity } = req.body;
+  try {
+    const { user_id, product_variant_id, size, color, quantity } = req.body;
 
-    console.log(req.body);
-    const user_id = req.user.id; // Assuming user is authenticated and user ID is available in req.user
+    console.log("Request Body:", req.body);
 
-    // Validate input
-    if (!product_variant_id || !quantity || quantity < 1) {
+    // Input validation
+    if (!user_id || !product_variant_id || !size || !color || !quantity || quantity < 1) {
       return res.status(400).json({
         success: false,
-        message: 'Product variant ID and quantity are required. Quantity must be at least 1.'
+        message: "All fields (user_id, product_id, size, color, quantity) are required and quantity must be >= 1.",
       });
     }
 
-    // Check if product variant exists
-    const productVariant = await db.ProductVariant.findByPk(product_variant_id, {
-      include: [{ 
-        model: db.Product,
-        attributes: ['id', 'name', 'price', 'description']
-      }]
+    // Find matching product variant by size and color
+    const productVariant = await db.ProductVariant.findOne({
+      where: {
+        size,
+        color,
+      },
     });
-    console.log(productVariant);
 
     if (!productVariant) {
       return res.status(404).json({
         success: false,
-        message: 'Product variant not found'
+        message: "No product variant found with the given size and color.",
       });
     }
 
-    // Check if item already exists in cart
+    // Check inventory for the variant
+    const inventory = await db.Inventory.findOne({
+      where: { product_variant_id: productVariant.id },
+    });
+
+    if (!inventory || inventory.stock < quantity) {
+      return res.status(400).json({
+        success: false,
+        message: "Insufficient stock for the selected variant.",
+      });
+    }
+
+    // Check if cart item already exists
     let cartItem = await db.Cart.findOne({
       where: {
         user_id,
-        product_variant_id
-      }
+        product_variant_id: productVariant.id,
+      },
     });
 
     if (cartItem) {
-      // Update quantity if item already exists
-      cartItem.quantity += quantity;
+      const newQuantity = cartItem.quantity + quantity;
+
+      // Ensure total does not exceed stock
+      if (newQuantity > inventory.stock) {
+        return res.status(400).json({
+          success: false,
+          message: `Cannot add ${quantity} more. Only ${inventory.stock - cartItem.quantity} left in stock.`,
+        });
+      }
+
+      cartItem.quantity = newQuantity;
       await cartItem.save();
     } else {
-      // Create new cart item 
       cartItem = await db.Cart.create({
         user_id,
-        product_variant_id,
-        quantity
+        product_variant_id: productVariant.id,
+        quantity,
+        size,
+        color,
       });
     }
-    console.log(cartItem);
+
     return res.status(200).json({
       success: true,
-      message: 'Item added to cart successfully',
-      data: cartItem
+      message: "Item added to cart successfully",
+      data: cartItem,
     });
+
   } catch (error) {
-    console.error('Error adding item to cart:', error);
+    console.error("Error adding item to cart:", error);
     return res.status(500).json({
       success: false,
-      message: 'Failed to add item to cart',
-      error: error.message
+      message: "Server error while adding item to cart",
+      error: error.message,
     });
   }
 };
@@ -72,7 +92,7 @@ exports.addToCart = async (req, res) => {
 // Get cart items for a user
 exports.getCartItems = async (req, res) => {
   try {
-    const user_id = req.user.id; // Assuming user is authenticated
+    const user_id = req.user.id;
 
     const cartItems = await db.Cart.findAll({
       where: { user_id },
@@ -83,43 +103,58 @@ exports.getCartItems = async (req, res) => {
           include: [
             {
               model: db.Product,
-              attributes: ["id", "name", "price", "description"],
+              attributes: ["id", "name", "base_price", "description"],
             },
           ],
         },
       ],
     });
 
-    // Calculate total price
-    let totalPrice = 0;
-    const cartWithTotals = cartItems.map((item) => {
+    let subtotal = 0;
+
+    const items = cartItems.map((item) => {
       const variant = item.ProductVariant;
       const product = variant.Product;
-      
-      // Calculate price including any additional price from the variant
-      const basePrice = parseFloat(product.price);
+
+      const basePrice = parseFloat(product.base_price);
       const additionalPrice = parseFloat(variant.additional_price || 0);
       const itemPrice = basePrice + additionalPrice;
       const itemTotal = itemPrice * item.quantity;
 
-      totalPrice += itemTotal;
-      
+      subtotal += itemTotal;
+
       return {
-        ...item.toJSON(),
-        itemPrice,
-        itemTotal,
-        productName: product.name,
-        productDescription: product.description,
-       
+        cartItemId: item.id,
+        quantity: item.quantity,
+
+        product: {
+          id: product.id,
+          name: product.name,
+          description: product.description,
+        },
+
+        variant: {
+          id: variant.id,
+          color: variant.color,
+          size: variant.size,
+          image_url: variant.image_url,
+          additional_price: additionalPrice,
+        },
+
+        pricing: {
+          base_price: basePrice,
+          item_price: itemPrice,
+          total_price: itemTotal,
+        },
       };
     });
 
     return res.status(200).json({
       success: true,
       data: {
-        items: cartWithTotals,
-        totalPrice,
-        itemCount: cartWithTotals.length,
+        items,
+        subtotal,
+        itemCount: items.length,
       },
     });
   } catch (error) {
@@ -127,10 +162,11 @@ exports.getCartItems = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Failed to fetch cart items',
-      error: error.message
+      error: error.message,
     });
   }
 };
+
 
 // Update cart item quantity
 exports.updateCartItem = async (req, res) => {

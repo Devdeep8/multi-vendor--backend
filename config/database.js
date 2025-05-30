@@ -28,7 +28,15 @@ ProductVariant : require("../src/models/product_varient_model/product.varient.mo
 Wishlist : require("../src/models/wishlist_model/wishlist.model")(sequelize,DataTypes),
 ProductReview : require("../src/models/review_model/review.model")(sequelize,DataTypes),
 Inventory : require("../src/models/inventory_model/inventory.model")(sequelize,DataTypes),
-Cart : require("../src/models/carts_model/cart.model")(sequelize,DataTypes)
+Cart : require("../src/models/carts_model/cart.model")(sequelize,DataTypes),
+
+Address: require("../src/models/address_model/address.model")(sequelize, DataTypes),
+  Order: require("../src/models/order_model/order.model")(sequelize, DataTypes),
+  OrderItem: require("../src/models/orderItem_model/orderItem.model")(sequelize, DataTypes),
+  Payment: require("../src/models/payment_model/payment.model")(sequelize, DataTypes),
+  Coupon: require("../src/models/coupon_model/coupon.model")(sequelize, DataTypes),
+  CouponRedemption: require("../src/models/couponRedemption_model/couponRedemption.model")(sequelize, DataTypes),
+  AuditLog: require("../src/models/auditLog_model/auditLog.model")(sequelize, DataTypes),
 } 
 
 

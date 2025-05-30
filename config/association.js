@@ -97,4 +97,43 @@ module.exports = (db) => {
   db.Cart.belongsTo(db.ProductVariant, {
     foreignKey: "product_variant_id",
   });
+   db.Address.belongsTo(db.User, { foreignKey: "user_id" });
+  db.User.hasMany(db.Address, { foreignKey: "user_id" });
+
+  // 🔗 Order associations
+  db.Order.belongsTo(db.User, { foreignKey: "user_id" });
+  db.Order.belongsTo(db.Coupon, { foreignKey: "coupon_id" });
+  db.Order.belongsTo(db.Address, { as: 'billingAddress', foreignKey: "billing_address_id" });
+  db.Order.belongsTo(db.Address, { as: 'shippingAddress', foreignKey: "shipping_address_id" });
+
+  db.User.hasMany(db.Order, { foreignKey: "user_id" });
+  db.Coupon.hasMany(db.Order, { foreignKey: "coupon_id" });
+
+  // 🔗 OrderItem associations
+  db.OrderItem.belongsTo(db.Order, { foreignKey: "order_id" });
+  db.Order.hasMany(db.OrderItem, { foreignKey: "order_id" });
+
+  db.OrderItem.belongsTo(db.ProductVariant, { foreignKey: "product_variant_id" });
+  db.OrderItem.belongsTo(db.Seller, { foreignKey: "seller_id" });
+
+  // 🔗 Payment associations
+  db.Payment.belongsTo(db.Order, { foreignKey: "order_id" });
+  db.Order.hasOne(db.Payment, { foreignKey: "order_id" });
+
+  // 🔗 CouponRedemption associations
+  db.CouponRedemption.belongsTo(db.Coupon, { foreignKey: "coupon_id" });
+  db.CouponRedemption.belongsTo(db.User, { foreignKey: "user_id" });
+  db.CouponRedemption.belongsTo(db.Order, { foreignKey: "order_id" });
+
+  db.Coupon.hasMany(db.CouponRedemption, { foreignKey: "coupon_id" });
+  db.User.hasMany(db.CouponRedemption, { foreignKey: "user_id" });
+  db.Order.hasOne(db.CouponRedemption, { foreignKey: "order_id" });
+
+  // 🔗 Coupon → Seller
+  db.Coupon.belongsTo(db.Seller, { foreignKey: "seller_id" }); 
+  db.Seller.hasMany(db.Coupon, { foreignKey: "seller_id" });
+
+  // 🔗 AuditLog associations
+  db.AuditLog.belongsTo(db.User, { foreignKey: "user_id" });
+  db.User.hasMany(db.AuditLog, { foreignKey: "user_id" });
 };
