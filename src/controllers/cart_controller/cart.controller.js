@@ -123,6 +123,17 @@ exports.getCartItems = async (req, res) => {
 
       subtotal += itemTotal;
 
+      // Parse image_url JSON and get the first image
+      let imageUrl = null;
+      try {
+        const images = JSON.parse(variant.image_url);
+        if (Array.isArray(images) && images.length > 0) {
+          imageUrl = images[0];
+        }
+      } catch {
+        imageUrl = null;
+      }
+
       return {
         cartItemId: item.id,
         quantity: item.quantity,
@@ -137,7 +148,7 @@ exports.getCartItems = async (req, res) => {
           id: variant.id,
           color: variant.color,
           size: variant.size,
-          image_url: variant.image_url,
+          image_url: imageUrl,
           additional_price: additionalPrice,
         },
 
@@ -166,7 +177,6 @@ exports.getCartItems = async (req, res) => {
     });
   }
 };
-
 
 // Update cart item quantity
 exports.updateCartItem = async (req, res) => {
@@ -282,6 +292,32 @@ exports.clearCart = async (req, res) => {
       success: false,
       message: 'Failed to clear cart',
       error: error.message
+    });
+  }
+};
+
+
+exports.getTotalCartItems = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Count how many distinct cart items the user has
+    const totalItems = await db.Cart.count({
+      where: { user_id: userId },
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        totalItems,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching total cart items:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to fetch total cart items',
+      error: error.message,
     });
   }
 };

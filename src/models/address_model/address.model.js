@@ -1,8 +1,6 @@
 const { DataTypes } = require("sequelize");
 
-
-
-module.exports = (sequelize,) => {
+module.exports = (sequelize) => {
   const Address = sequelize.define("Address", {
     id: {
       type: DataTypes.UUID,
@@ -19,6 +17,16 @@ module.exports = (sequelize,) => {
     country: DataTypes.STRING,
     postal_code: DataTypes.STRING,
     phone_number: DataTypes.STRING,
+  }, {
+    indexes: [
+      {
+        fields: ['user_id'], // fast lookup by user
+      },
+      {
+        fields: ['user_id', 'type'], // fast lookup by user + type (shipping/billing)
+      },
+    ],
   });
+
   return Address;
 };

@@ -26,8 +26,6 @@ module.exports = (sequelize) => {
        indexes: [
       { fields: ['user_id'] },                // Find orders by user
       { fields: ['coupon_id'] },              // Find orders by coupon
-      { fields: ['billing_address_id'] },     // (Optional) Find orders by billing address
-      { fields: ['shipping_address_id'] },    // (Optional) Find orders by shipping address
       { fields: ['created_at'] },             // Sort/filter by date
       { fields: ['order_status'] },           // Filter by order status
       { fields: ['payment_status'] },         // Filter by payment status

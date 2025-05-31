@@ -11,6 +11,9 @@ const review = require("../routes/review_routes/review.routes")
 const inventoryRoutes = require("../routes/inventory_routes/inventory_routes");
 const cartRoutes = require("../routes/cart_routes/cart.route");
 const costumerRoutes = require("../routes/costumer_routes/costumer.route")
+const addressRoutes = require("../routes/address_routes/address.route")
+const couponRoutes = require("../routes/coupon_routes/coupon.route")
+
 router.use("/inventories", inventoryRoutes);
 router.use("/auth", userRoutes)
 router.use("/sellers", seller)
@@ -20,4 +23,8 @@ router.use("/wishlist", wishlist)
 router.use("/review", review)
 router.use("/cart", cartRoutes)
 router.use("/costumer", costumerRoutes)
+router.use("/address", addressRoutes)
+router.use("/coupon", couponRoutes)
+
+
 module.exports = router
