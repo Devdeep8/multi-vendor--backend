@@ -6,7 +6,6 @@ module.exports = (sequelize) => {
     id: { type: DataTypes.UUID, primaryKey: true, defaultValue: DataTypes.UUIDV4 },
     order_id: { type: DataTypes.UUID, allowNull: false },
     method: { type: DataTypes.STRING, allowNull: false },
-    reference: { type: DataTypes.STRING },
     status: { type: DataTypes.STRING, allowNull: false },
     timestamp: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },

@@ -103,7 +103,7 @@ exports.getCartItems = async (req, res) => {
           include: [
             {
               model: db.Product,
-              attributes: ["id", "name", "base_price", "description"],
+              attributes: ["id", "name", "base_price", "description" , "seller_id"],
             },
           ],
         },
@@ -142,6 +142,7 @@ exports.getCartItems = async (req, res) => {
           id: product.id,
           name: product.name,
           description: product.description,
+          seller_id : product.seller_id, // Assuming seller_id is in the Product model
         },
 
         variant: {

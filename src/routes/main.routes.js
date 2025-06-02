@@ -13,6 +13,11 @@ const cartRoutes = require("../routes/cart_routes/cart.route");
 const costumerRoutes = require("../routes/costumer_routes/costumer.route")
 const addressRoutes = require("../routes/address_routes/address.route")
 const couponRoutes = require("../routes/coupon_routes/coupon.route")
+const orderRouter = require("../routes/order_router/order.router")
+const adminRoutes = require("../routes/admin_routes/admin.routes")
+// const supportRoutes = require("./admin/support.routes")
+
+
 
 router.use("/inventories", inventoryRoutes);
 router.use("/auth", userRoutes)
@@ -25,6 +30,8 @@ router.use("/cart", cartRoutes)
 router.use("/costumer", costumerRoutes)
 router.use("/address", addressRoutes)
 router.use("/coupon", couponRoutes)
-
+router.use("/order", orderRouter)
+router.use("/admin", adminRoutes)
+// router.use("/support", supportRoutes)
 
 module.exports = router

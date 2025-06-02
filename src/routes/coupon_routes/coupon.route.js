@@ -24,7 +24,7 @@ router.get('/my-coupons', verifyToken,CouponController.getCouponsBySellerId);
 router.get('/seller/:seller_id', verifyToken ,CouponController.getCouponsBySpecificSellerId);
 
 // Validate coupon for order
-router.post('/validate/:code', verifyToken ,CouponController.validateCoupon);
+router.post('/validate', verifyToken ,CouponController.validateCoupon);
 
 // Update coupon (only user's own coupons)
 router.put('/:id', verifyToken ,CouponController.updateCoupon);

@@ -8,9 +8,10 @@ module.exports = (sequelize) => {
     quantity: { type: DataTypes.INTEGER, allowNull: false },
     price: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
   }, {
-    timestamps: false,
+    timestamps: true ,
     tableName: 'order_items',
   });
 
   return OrderItem;
-};
+}; 
+ 

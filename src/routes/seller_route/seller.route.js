@@ -21,6 +21,18 @@ router.get('/get-seller-by-userid/:user_id', sellerController.getSellerByUserId)
 
 router.get("/get-product-by-sellerId/:seller_id" , sellerController.getProductsBySellerId)
 
+//get order by seller id
+router.get("/get-order-by-sellerId" , verifyToken,sellerController.getOrdersBySellerId)
+
+//get seller discount
+
+router.get("/get-discount-by-sellerId" , verifyToken, sellerController.getDiscountAnalyticsBySeller)
+
+
+// get the seller's analytics
+
+router.get("/get-seller-analytics", verifyToken, sellerController.getSellerDashboardData)
+
 
 // Delete seller by ID
 router.delete('/delete-seller/:id', sellerController.deleteSeller)

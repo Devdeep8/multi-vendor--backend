@@ -29,7 +29,6 @@ exports.getCategories = async (req, res) => {
     const categories = await Category.findAll({
       include: {
         model: Subcategory,
-        as: 'subcategories',
       },
       order: [['name', 'ASC']],
     })

@@ -1,5 +1,5 @@
 const db = require("../../../config/database");
-const { Coupon, Seller } = db;
+const { Coupon, Seller , Product , ProductVariant} = db;
 const { Op } = require("sequelize");
 const getSellerIdByUserId = require("../../utils/getSellerIdByUserId");
 
@@ -136,6 +136,7 @@ class CouponController {
     } catch (error) {
       res.status(500).json({
         success: false,
+        valid:false,
         message: "Internal server error",
         error: error.message,
       });
@@ -152,6 +153,7 @@ class CouponController {
       if (!coupon) {
         return res.status(404).json({
           success: false,
+          valid:false,
           message: "Coupon not found",
         });
       }
@@ -163,6 +165,7 @@ class CouponController {
     } catch (error) {
       res.status(500).json({
         success: false,
+        valid:false,
         message: "Internal server error",
         error: error.message,
       });
@@ -181,6 +184,7 @@ class CouponController {
       if (!coupon) {
         return res.status(404).json({
           success: false,
+          valid:false,
           message: "Coupon not found",
         });
       }
@@ -192,6 +196,7 @@ class CouponController {
     } catch (error) {
       res.status(500).json({
         success: false,
+        valid:false,
         message: "Internal server error",
         error: error.message,
       });
@@ -207,6 +212,7 @@ class CouponController {
       if (!user_id) {
         return res.status(401).json({
           success: false,
+          valid:false,
           message: "User authentication required",
         });
       }
@@ -219,6 +225,7 @@ class CouponController {
       if (!seller) {
         return res.status(404).json({
           success: false,
+          valid:false,
           message: "Seller profile not found for this user",
         });
       }
@@ -254,6 +261,7 @@ class CouponController {
     } catch (error) {
       res.status(500).json({
         success: false,
+        valid:false,
         message: "Internal server error",
         error: error.message,
       });
@@ -295,6 +303,7 @@ class CouponController {
     } catch (error) {
       res.status(500).json({
         success: false,
+        valid:false,
         message: "Internal server error",
         error: error.message,
       });
@@ -313,6 +322,7 @@ class CouponController {
       if (!user_id) {
         return res.status(401).json({
           success: false,
+          valid:false,
           message: "User authentication required",
         });
       }
@@ -325,6 +335,7 @@ class CouponController {
       if (!seller) {
         return res.status(404).json({
           success: false,
+          valid:false,
           message: "Seller profile not found for this user",
         });
       }
@@ -334,6 +345,7 @@ class CouponController {
       if (!coupon) {
         return res.status(404).json({
           success: false,
+          valid:false,
           message: "Coupon not found",
         });
       }
@@ -342,6 +354,7 @@ class CouponController {
       if (coupon.seller_id !== seller.id) {
         return res.status(403).json({
           success: false,
+          valid:false,
           message: "Access denied. You can only update your own coupons",
         });
       }
@@ -351,6 +364,7 @@ class CouponController {
         if (new Date(updateData.start_date) >= new Date(updateData.end_date)) {
           return res.status(400).json({
             success: false,
+            valid:false,
             message: "Start date must be before end date",
           });
         }
@@ -370,12 +384,14 @@ class CouponController {
       if (error.name === "SequelizeUniqueConstraintError") {
         return res.status(400).json({
           success: false,
+          valid:false,
           message: "Coupon code already exists",
         });
       }
 
       res.status(500).json({
         success: false,
+        valid:false,
         message: "Internal server error",
         error: error.message,
       });
@@ -393,6 +409,7 @@ class CouponController {
       if (!user_id) {
         return res.status(401).json({
           success: false,
+          valid:false,
           message: "User authentication required",
         });
       }
@@ -405,6 +422,7 @@ class CouponController {
       if (!seller) {
         return res.status(404).json({
           success: false,
+          valid:false,
           message: "Seller profile not found for this user",
         });
       }
@@ -414,6 +432,7 @@ class CouponController {
       if (!coupon) {
         return res.status(404).json({
           success: false,
+          valid:false,
           message: "Coupon not found",
         });
       }
@@ -422,6 +441,7 @@ class CouponController {
       if (coupon.seller_id !== seller.id) {
         return res.status(403).json({
           success: false,
+          valid:false,
           message: "Access denied. You can only delete your own coupons",
         });
       }
@@ -438,6 +458,7 @@ class CouponController {
     } catch (error) {
       res.status(500).json({
         success: false,
+        valid:false,
         message: "Internal server error",
         error: error.message,
       });
@@ -455,6 +476,7 @@ class CouponController {
       if (!user_id) {
         return res.status(401).json({
           success: false,
+          valid:false,
           message: "User authentication required",
         });
       }
@@ -463,6 +485,7 @@ class CouponController {
       if (req.user?.role !== "admin") {
         return res.status(403).json({
           success: false,
+          valid:false,
           message:
             "Access denied. Admin privileges required for permanent deletion",
         });
@@ -473,6 +496,7 @@ class CouponController {
       if (!coupon) {
         return res.status(404).json({
           success: false,
+          valid:false,
           message: "Coupon not found",
         });
       }
@@ -486,70 +510,124 @@ class CouponController {
     } catch (error) {
       res.status(500).json({
         success: false,
+        valid:false,
         message: "Internal server error",
         error: error.message,
       });
     }
   }
 
-  // Validate coupon for order
-  static async validateCoupon(req, res) {
-    try {
-      const { code } = req.params;
-      const { order_amount } = req.body;
+static async validateCoupon(req, res) {
+  try {
+    console.log(req.body)
+    const { code, order_amount, product_variant_ids } = req.body;
 
-      const coupon = await Coupon.findOne({
-        where: {
-          code,
-          is_active: true,
-          start_date: { [Op.lte]: new Date() },
-          end_date: { [Op.gte]: new Date() },
-        },
-      });
-
-      if (!coupon) {
-        return res.status(404).json({
-          success: false,
-          message: "Invalid or expired coupon",
-        });
-      }
-
-      // Check minimum order amount
-      if (coupon.min_order_amount && order_amount < coupon.min_order_amount) {
-        return res.status(400).json({
-          success: false,
-          message: `Minimum order amount of ${coupon.min_order_amount} required`,
-        });
-      }
-
-      // Calculate Coupon
-      let Coupon = 0;
-      if (coupon.Coupon_type === "percentage") {
-        Coupon = (order_amount * coupon.value) / 100;
-        if (coupon.max_Coupon && Coupon > coupon.max_Coupon) {
-          Coupon = coupon.max_Coupon;
-        }
-      } else {
-        Coupon = coupon.value;
-      }
-
-      res.status(200).json({
-        success: true,
-        message: "Coupon is valid",
-        data: {
-          coupon,
-          Coupon: Math.min(Coupon, order_amount),
-          final_amount: Math.max(0, order_amount - Coupon),
-        },
-      });
-    } catch (error) {
-      res.status(500).json({
+    if (!order_amount || isNaN(order_amount)) {
+      return res.status(400).json({
         success: false,
-        message: "Internal server error",
-        error: error.message,
+        valid:false,
+        message: "Invalid or missing order amount",
       });
     }
+
+    if (!Array.isArray(product_variant_ids) || product_variant_ids.length === 0) {
+      return res.status(400).json({
+        success: false,
+        valid:false,
+        message: "No products provided to validate coupon against.",
+      });
+    }
+
+    const coupon = await Coupon.findOne({
+      where: {
+        code,
+        is_active: true,
+        start_date: { [Op.lte]: new Date() },
+        end_date: { [Op.gte]: new Date() },
+        status: "active",
+      },
+    });
+
+    if (!coupon) {
+      return res.status(404).json({
+        success: false,
+        valid:false,
+        message: "Invalid or expired coupon",
+      });
+    }
+
+    // Fetch seller_ids of the provided product_variants
+    const productVariants = await ProductVariant.findAll({
+      where: { id: product_variant_ids },
+      include: {
+        model: Product,
+        attributes: ["seller_id"],
+      },
+    });
+
+    const uniqueSellerIds = new Set(productVariants.map(pv => pv.Product.seller_id));
+
+    if (uniqueSellerIds.size !== 1 || !uniqueSellerIds.has(coupon.seller_id)) {
+      return res.status(400).json({
+        success: false,
+        valid:false,
+        message: "Coupon can only be applied to products of the seller who created it.",
+      });
+    }
+
+    // Check usage limits
+    if (coupon.usage_limit > 0 && coupon.usage_count >= coupon.usage_limit) {
+      return res.status(400).json({
+        success: false,
+        valid:false,
+        message: "Coupon usage limit reached",
+      });
+    }
+
+    // Check minimum purchase
+    if (parseFloat(order_amount) < parseFloat(coupon.min_purchase)) {
+      return res.status(400).json({
+        success: false,
+        valid:false,
+        message: `Minimum purchase of ₹${coupon.min_purchase} required`,
+      });
+    }
+
+    // Calculate discount
+    let discount = 0;
+    if (coupon.type === "percentage") {
+      discount = (order_amount * coupon.value) / 100;
+      if (coupon.max_discount && discount > coupon.max_discount) {
+        discount = parseFloat(coupon.max_discount);
+      }
+    } else {
+      discount = parseFloat(coupon.value);
+    }
+
+    discount = Math.min(discount, order_amount);
+    const final_amount = Math.max(0, order_amount - discount);
+
+    return res.status(200).json({
+      valid: true,
+      message: "Coupon is valid",
+      discount: {
+        coupon_id: coupon.id,
+        discountAmount: discount,
+        finalAmount: final_amount,
+      },
+    });
+  } catch (error) {
+    console.error("Coupon validation error:", error);
+    return res.status(500).json({
+      success: false,
+      valid:false,
+      message: "Internal server error",
+      error: error.message,
+    });
   }
+}
+
+
 }
 
 module.exports = CouponController;

@@ -21,9 +21,9 @@ module.exports = (sequelize) => {
       payment_status: { type: DataTypes.STRING, allowNull: false },
     },
     {
-      timestamps: false,
+      timestamps: true,
       tableName: "orders",
-       indexes: [
+       indexes: [ 
       { fields: ['user_id'] },                // Find orders by user
       { fields: ['coupon_id'] },              // Find orders by coupon
       { fields: ['created_at'] },             // Sort/filter by date

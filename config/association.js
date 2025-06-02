@@ -49,7 +49,6 @@ module.exports = (db) => {
   // Category → Subcategory
   db.Category.hasMany(db.Subcategory, {
     foreignKey: "category_id",
-    as: "subcategories",
     onDelete: "CASCADE",
   });
   db.Subcategory.belongsTo(db.Category, {
@@ -136,4 +135,70 @@ module.exports = (db) => {
   // 🔗 AuditLog associations
   db.AuditLog.belongsTo(db.User, { foreignKey: "user_id" });
   db.User.hasMany(db.AuditLog, { foreignKey: "user_id" });
+
+  // Product belongsTo Seller
+db.Product.belongsTo(db.Seller, {
+  foreignKey: "seller_id",
+  onDelete: "CASCADE",
+});
+
+// Seller hasMany Products
+db.Seller.hasMany(db.Product, {
+  foreignKey: "seller_id",
+  onDelete: "CASCADE",
+});
+
+
+
+db.OrderItem.belongsTo(db.ProductVariant, {
+  foreignKey: "product_variant_id",
+  onDelete: "CASCADE",
+});
+
+db.ProductVariant.hasMany(db.OrderItem, {
+  foreignKey: "product_variant_id",
+  onDelete: "CASCADE",
+});
+
+// Product belongsTo Category
+db.Product.belongsTo(db.Category, {
+  foreignKey: "category_id",
+  onDelete: "CASCADE",
+});
+
+// Category hasMany Product
+db.Category.hasMany(db.Product, {
+  foreignKey: "category_id",
+  onDelete: "CASCADE",
+});
+
+// Support Ticket associations
+// db.SupportTicket.belongsTo(db.User, {
+//   foreignKey: "user_id",
+//   onDelete: "CASCADE",
+// });
+
+// db.User.hasMany(db.SupportTicket, {
+//   foreignKey: "user_id",
+// });
+
+// db.SupportTicketReply.belongsTo(db.SupportTicket, {
+//   foreignKey: "ticket_id",
+//   onDelete: "CASCADE",
+// });
+
+// db.SupportTicket.hasMany(db.SupportTicketReply, {
+//   foreignKey: "ticket_id",
+// });
+
+// db.SupportTicketReply.belongsTo(db.User, {
+//   foreignKey: "user_id",
+//   onDelete: "CASCADE",
+// });
+
+// db.User.hasMany(db.SupportTicketReply, {
+//   foreignKey: "user_id",
+// });
+
 };
+  
