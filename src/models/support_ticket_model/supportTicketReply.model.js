@@ -5,9 +5,9 @@ module.exports = (sequelize) => {
     "SupportTicketReply",
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
-        autoIncrement: true,
       },
       message: {
         type: DataTypes.TEXT,
@@ -17,20 +17,14 @@ module.exports = (sequelize) => {
         },
       },
       ticket_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
-        references: {
-          model: "support_tickets",
-          key: "id",
-        },
+       
       },
       user_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
-        references: {
-          model: "Users",
-          key: "id",
-        },
+       
       },
       created_at: {
         type: DataTypes.DATE,

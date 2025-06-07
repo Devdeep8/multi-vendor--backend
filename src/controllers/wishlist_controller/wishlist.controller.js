@@ -4,9 +4,10 @@ const { Wishlist, Product } = db;
 // Create a wishlist entry
 exports.addToWishlist = async (req, res) => {
   try {
-    const { user_id, product_id } = req.body;
-
-    // Prevent duplicates
+    console.log(req.body)
+    const {  product_id } = req.body;
+    const user_id = req.user.id; 
+     // Prevent duplicates
     const existing = await Wishlist.findOne({ where: { user_id, product_id } });
     if (existing) {
       return res.status(400).json({ message: 'Product already in wishlist' });
@@ -26,10 +27,17 @@ exports.getUserWishlist = async (req, res) => {
 
     const wishlist = await Wishlist.findAll({
       where: { user_id },
-      include: [{ model: Product }],
+      include: [{ model: Product ,
+        include: [
+          {
+
+            model : db.ProductVariant 
+          }
+        ]
+      }],
     });
 
-    res.json(wishlist);
+    res.status(200).json({ success: true, data: wishlist });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -45,7 +53,7 @@ exports.removeFromWishlist = async (req, res) => {
     });
 
     if (!deleted) return res.status(404).json({ message: 'Not found' });
-    res.json({ message: 'Removed from wishlist' });
+      res.json({ message: 'Removed from wishlist' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

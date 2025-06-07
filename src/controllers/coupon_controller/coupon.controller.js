@@ -469,7 +469,7 @@ class CouponController {
   static async hardDeleteCoupon(req, res) {
     try {
       const { id } = req.params;
-
+      console.log('ID:', id , req.user);
       // Get user_id from authenticated user (admin only)
       const user_id = req.user?.id || req.user?.user_id;
 
@@ -482,14 +482,7 @@ class CouponController {
       }
 
       // Check if user is admin (assuming role is available in req.user)
-      if (req.user?.role !== "admin") {
-        return res.status(403).json({
-          success: false,
-          valid:false,
-          message:
-            "Access denied. Admin privileges required for permanent deletion",
-        });
-      }
+
 
       const coupon = await Coupon.findByPk(id);
 

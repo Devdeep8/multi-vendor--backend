@@ -12,7 +12,7 @@ router.post('/seller', verifyToken,CouponController.createCoupon);
 router.get('/all', verifyToken,CouponController.getAllCoupons);
 
 // Get coupon by ID
-router.get('/id/:id',verifyToken ,CouponController.getCouponById);
+router.get('/get-discount-by-discoundId/:id',verifyToken ,CouponController.getCouponById);
 
 // Get coupon by code
 router.get('/code/:code',verifyToken ,CouponController.getCouponByCode);

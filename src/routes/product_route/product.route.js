@@ -7,4 +7,5 @@ const productController = require("../../controllers/product_controller/product.
 
 
 router.post("/create" , uploads.any(),productController.createFullProductWithVariants)
+router.get("/get-all-products" , productController.getAllProductsWithVariants)
 module.exports = router  

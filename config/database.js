@@ -31,12 +31,14 @@ Inventory : require("../src/models/inventory_model/inventory.model")(sequelize,D
 Cart : require("../src/models/carts_model/cart.model")(sequelize,DataTypes),
 
 Address: require("../src/models/address_model/address.model")(sequelize, DataTypes),
-  Order: require("../src/models/order_model/order.model")(sequelize, DataTypes),
-  OrderItem: require("../src/models/orderItem_model/orderItem.model")(sequelize, DataTypes),
-  Payment: require("../src/models/payment_model/payment.model")(sequelize, DataTypes),
-  Coupon: require("../src/models/coupon_model/coupon.model")(sequelize, DataTypes),
-  CouponRedemption: require("../src/models/couponRedemption_model/couponRedemption.model")(sequelize, DataTypes),
-  AuditLog: require("../src/models/auditLog_model/auditLog.model")(sequelize, DataTypes),
+Order: require("../src/models/order_model/order.model")(sequelize, DataTypes),
+OrderItem: require("../src/models/orderItem_model/orderItem.model")(sequelize, DataTypes),
+Payment: require("../src/models/payment_model/payment.model")(sequelize, DataTypes),
+Coupon: require("../src/models/coupon_model/coupon.model")(sequelize, DataTypes),
+CouponRedemption: require("../src/models/couponRedemption_model/couponRedemption.model")(sequelize, DataTypes),
+AuditLog: require("../src/models/auditLog_model/auditLog.model")(sequelize, DataTypes),
+SupportTicket: require("../src/models/support_ticket_model/supportTicket.model")(sequelize, DataTypes),
+SupportTicketReply: require("../src/models/support_ticket_model/supportTicketReply.model")(sequelize, DataTypes),
 } 
 
 

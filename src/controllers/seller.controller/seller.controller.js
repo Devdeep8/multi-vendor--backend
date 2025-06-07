@@ -24,7 +24,7 @@ exports.createSeller = async (req, res) => {
       user_id,
       store_name,
       store_description,
-      status = "approved",
+      status = "pending",
     } = req.body;
     console.log(req.body);
 
@@ -45,7 +45,7 @@ exports.createSeller = async (req, res) => {
     });
 
     // Update the user role to 'seller' (or whatever role you want)
-    await User.update({ role: "seller" }, { where: { id: user_id } });
+    // await User.update({ role: "seller" }, { where: { id: user_id } });
 
     return res.status(201).json({
       seller,
@@ -280,7 +280,7 @@ exports.getOrdersBySellerId = async (req, res) => {
         cancelledOrdersChange: 0,
       },
       orders: orders.map(order => ({
-        id: `ORD-${order.id}`,
+        id: `${order.id}`,
         customer: {
           name: order.User?.name || "N/A",
           email: order.User?.email || "N/A",

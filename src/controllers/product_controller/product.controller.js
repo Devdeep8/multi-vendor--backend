@@ -1,9 +1,9 @@
 const { v4: uuidv4 } = require('uuid');
 const db = require('../../../config/database');
-const { Product, ProductVariant, Inventory } = db; // Make sure Inventory is imported
+const { Product, ProductVariant, Inventory , Category , Subcategory} = db; // Make sure Inventory is imported
 require('dotenv').config();
 
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const FRONTEND_URL = 'http://localhost:3000';
 
 exports.createFullProductWithVariants = async (req, res) => {
   try {
@@ -33,7 +33,7 @@ exports.createFullProductWithVariants = async (req, res) => {
       subcategory_id: product.subcategory_id,
     });
 
-    const shareableLink = `${FRONTEND_URL}/all/product/${newProduct.slug}`;
+    const shareableLink = `${FRONTEND_URL}/product/${newProduct.slug}`;
     await newProduct.update({ shareable_link: shareableLink });
 
     const createdVariants = [];
@@ -79,7 +79,7 @@ exports.createFullProductWithVariants = async (req, res) => {
   }
 };
 
-exports.getFullProductWithVariants = async (req, res) => {
+exports.getFullProductWithVariantsWithId = async (req, res) => {
   try {
     const productId = req.params.id;
 
@@ -121,6 +121,64 @@ exports.getFullProductWithVariants = async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching product with variants:', error);
+    return res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+};
+
+
+// controllers/productController.js
+exports.getAllProductsWithVariants = async (req, res) => {
+  try {
+    const products = await Product.findAll({
+      include: [
+        {
+          model: ProductVariant,
+          include: [
+            {
+              model: Inventory,
+              attributes: ['stock'],
+            },
+          ],
+        },
+        {
+          model: Category,
+          attributes: ['name', 'slug'],
+        },
+        {
+          model: Subcategory,
+          attributes: ['name', 'slug'],
+        },
+      ],
+    });
+
+    const formatted = products.map((product) => {
+      return {
+        id: product.id,
+        name: product.name,
+        price: product.base_price,
+        originalPrice: product.original_price,
+        discount: product.discount_percentage,
+        rating: product.rating,
+        slug: product.slug,
+        category: product.Category,
+        subcategory: product.Subcategory,
+        // You can choose to show only first image, or all variant images
+        image_url: product.ProductVariants[0]?.image_url || null,
+        variants: product.ProductVariants.map((variant) => ({
+          color: variant.color,
+          size: variant.size,
+          image_url: variant.image_url,
+          stock: variant.Inventory?.stock || 0,
+        })),
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: formatted,
+    });
+  } catch (error) {
+    console.error('Error fetching products with variants:', error);
     return res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 };

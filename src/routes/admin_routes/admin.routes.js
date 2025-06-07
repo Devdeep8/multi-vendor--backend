@@ -3,6 +3,7 @@ const router = express.Router();
 const adminController = require('../../controllers/admin_controller/admin.controller');
 const { verifyToken, isAdmin, isSeller } = require('../../middleware/auth');
 
+const { uploads } = require("../../middleware/multer")
 
 
 
@@ -51,5 +52,10 @@ router.put('/settings', adminController.updateSettings);
 router.get('/reports/sales', adminController.getSalesReport);
 router.get('/reports/users', adminController.getUsersReport);
 router.get('/reports/products', adminController.getProductsReport);
+router.get('/pending/sellers', adminController.getPendingSeller);
+router.put("/seller/status", adminController.updateSellerStatus);
+router.get("/pending/sellers/by-user-id", verifyToken , adminController.getTheSellerStatus);
 
+router.put("/profile" ,uploads.single("profileImage"),verifyToken,adminController.updateProfile)
+router.put("/password" ,verifyToken,adminController.updatePassword)
 module.exports = router;

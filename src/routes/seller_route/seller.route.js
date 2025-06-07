@@ -29,6 +29,7 @@ router.get("/get-order-by-sellerId" , verifyToken,sellerController.getOrdersBySe
 router.get("/get-discount-by-sellerId" , verifyToken, sellerController.getDiscountAnalyticsBySeller)
 
 
+
 // get the seller's analytics
 
 router.get("/get-seller-analytics", verifyToken, sellerController.getSellerDashboardData)

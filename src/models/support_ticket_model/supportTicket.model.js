@@ -5,9 +5,9 @@ module.exports = (sequelize) => {
     "SupportTicket",
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
-        autoIncrement: true,
       },
       subject: {
         type: DataTypes.STRING,
@@ -45,12 +45,9 @@ module.exports = (sequelize) => {
         defaultValue: "open",
       },
       user_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
-        references: {
-          model: "Users",
-          key: "id",
-        },
+    
       },
       created_at: {
         type: DataTypes.DATE,
@@ -72,4 +69,4 @@ module.exports = (sequelize) => {
   );
 
   return SupportTicket;
-}; 
+};

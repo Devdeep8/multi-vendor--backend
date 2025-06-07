@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const wishlistController = require('../../controllers/wishlist_controller/wishlist.controller');
+const { verifyToken } = require('../../middleware/auth');
 
 // Add product to wishlist
-router.post('/', wishlistController.addToWishlist);
+router.post('/', verifyToken ,wishlistController.addToWishlist);
 
 // Get all wishlist items for a user
 router.get('/:user_id', wishlistController.getUserWishlist);

@@ -1,3 +1,4 @@
+
 const express = require("express")
 
 const router = express.Router()
@@ -16,7 +17,8 @@ const couponRoutes = require("../routes/coupon_routes/coupon.route")
 const orderRouter = require("../routes/order_router/order.router")
 const adminRoutes = require("../routes/admin_routes/admin.routes")
 // const supportRoutes = require("./admin/support.routes")
-
+const supportRoutes = require("../routes/support_tickect_route/supportTicket.route")  
+const notificationRoutes = require("./notification.routes")
 
 
 router.use("/inventories", inventoryRoutes);
@@ -32,6 +34,6 @@ router.use("/address", addressRoutes)
 router.use("/coupon", couponRoutes)
 router.use("/order", orderRouter)
 router.use("/admin", adminRoutes)
-// router.use("/support", supportRoutes)
+router.use("/support", supportRoutes)
 
 module.exports = router

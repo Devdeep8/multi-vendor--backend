@@ -2,11 +2,13 @@ const db = require("../../../config/database");
 const Product = db.Product;
 const ProductVariant = db.ProductVariant;
 const Review = db.ProductReview;
+const Category = db.Category;
+const Subcategory = db.Subcategory;
 
 exports.getNewArrivals = async (req, res) => {
   try {
     const products = await Product.findAll({
-      limit: 10,
+      limit: 10,  
       order: [['createdAt', 'DESC']],
       include: [
         {
@@ -79,6 +81,9 @@ exports.getProductBySlug = async (req, res) => {
   try {
     const product = await Product.findOne({
       where: { slug },
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
       include: [
         {
           model: ProductVariant,
@@ -87,6 +92,14 @@ exports.getProductBySlug = async (req, res) => {
         {
           model: Review,
           attributes: ['id', 'user_id', 'rating', 'review_text', 'created_at'],
+        },
+        {
+          model: Category,
+          attributes: ['id', 'name', 'slug'],
+        },
+        {
+          model: Subcategory,
+          attributes: ['id', 'name', 'slug'],
         },
       ],
     });
@@ -152,15 +165,32 @@ exports.getProductBySlug = async (req, res) => {
       id: product.id,
       name: product.name,
       slug: product.slug,
-      rating: parseFloat(avgRating),
-      price: parseFloat(product.base_price),
-      originalPrice: product.original_price ? parseFloat(product.original_price) : null,
+      base_price: parseFloat(product.base_price),
+      originalPrice: product.base_price ? parseFloat(product.base_price) : null,
       description: product.description,
+      rating: parseFloat(avgRating),
       images,
       colors,
       sizes,
-      variants, // ← include formatted variants here
+      variants,
       reviews,
+
+      // 👇 Add raw category & subcategory IDs
+      category_id: product.category_id || (product.Category?.id ?? null),
+      subcategory_id: product.subcategory_id || (product.Subcategory?.id ?? null),
+
+      // 👇 Add full category and subcategory details
+      category: product.Category ? {
+        id: product.Category.id,
+        name: product.Category.name,
+        slug: product.Category.slug,
+      } : null,
+
+      subcategory: product.Subcategory ? {
+        id: product.Subcategory.id,
+        name: product.Subcategory.name,
+        slug: product.Subcategory.slug,
+      } : null,
     };
 
     res.status(200).json({
